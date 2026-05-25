@@ -1,0 +1,99 @@
+<view class="container">
+  <view class="custom-nav">
+    <view class="avatar-wrap" bindtap="onAvatarClick">
+      <image class="avatar" src="/images/avatar.png" mode="aspectFill"></image>
+    </view>
+    <view class="nav-title">反拖延助手</view>
+  </view>
+
+  <view class="coach-card">
+    <view class="coach-bubble">
+      <text class="coach-text">{{coachMessage}}</text>
+    </view>
+  </view>
+
+  <view class="content-area">
+    <view wx:if="{{currentState === 'input'}}" class="input-card">
+      <view class="input-title">你想搞定哪件事？</view>
+      <textarea
+        class="task-input"
+        placeholder="我躺在被窝里想事情，没去回客户消息..."
+        placeholder-class="input-placeholder"
+        bindinput="onInputChange"
+        value="{{taskInput}}"
+        maxlength="-1"
+      ></textarea>
+      <view class="action-btn-wrap">
+        <button class="ghost-btn" bindtap="onCreatePlan">创建计划</button>
+      </view>
+    </view>
+
+    <view wx:elif="{{currentState === 'loading'}}" class="input-card loading-card">
+      <view class="input-title disabled">你想搞定哪件事？</view>
+      <textarea
+        class="task-input disabled"
+        placeholder="我躺在被窝里想事情，没去回客户消息..."
+        placeholder-class="input-placeholder"
+        value="{{taskInput}}"
+        disabled
+      ></textarea>
+      <view class="action-btn-wrap">
+        <button class="ghost-btn loading" loading>正在为你准备最优计划...</button>
+      </view>
+    </view>
+
+    <view wx:elif="{{currentState === 'result'}}" class="result-area">
+      <view class="target-card">
+        <view class="target-label">目标回顾</view>
+        <view class="target-text">{{taskInput}}</view>
+      </view>
+
+      <view class="steps-card">
+        <view class="steps-title">行动计划</view>
+        <view class="steps-list">
+          <view class="step-item" wx:for="{{result.steps}}" wx:key="index">
+            <view class="step-emoji">{{item.emoji}}</view>
+            <view class="step-content">
+              <view class="step-title">{{item.title}}</view>
+              <view class="step-desc">{{item.description}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="divider">
+        <text class="divider-text">—— 行动锦囊 ——</text>
+      </view>
+
+      <view class="tips-card">
+        <view class="tips-list">
+          <view class="tip-item" wx:for="{{result.tips}}" wx:key="index">
+            <text class="tip-icon">💡</text>
+            <text class="tip-text">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="reset-btn-wrap">
+        <button class="ghost-btn" bindtap="onReset">再拆解一件事</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="history-modal {{showHistory ? 'show' : ''}}" bindtap="onCloseHistory"></view>
+  <view class="history-panel {{showHistory ? 'show' : ''}}">
+    <view class="history-header">
+      <text class="history-title">历史战绩</text>
+      <view class="close-icon" bindtap="onCloseHistory">✕</view>
+    </view>
+    <scroll-view class="history-list" scroll-y>
+      <view wx:if="{{historyList.length === 0}}" class="empty-history">
+        <text>暂无历史记录</text>
+      </view>
+      <view class="history-item" wx:for="{{historyList}}" wx:key="_id">
+        <view class="history-task">{{item.task}}</view>
+        <view class="history-time">{{item.createTime}}</view>
+      </view>
+    </scroll-view>
+  </view>
+</view>
