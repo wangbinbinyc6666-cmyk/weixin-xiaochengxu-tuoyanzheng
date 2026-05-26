@@ -8,6 +8,11 @@ cloud.init({
 
 const db = cloud.database();
 
+// 从环境变量读取密钥（在微信云开发控制台「环境设置-环境变量」中配置）
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const WX_APPID = process.env.WX_APPID;
+const WX_APPSECRET = process.env.WX_APPSECRET;
+
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext();
   const openid = wxContext.OPENID;
@@ -21,12 +26,10 @@ exports.main = async (event, context) => {
   }
 
   try {
-    const apiKey = process.env.DEEPSEEK_API_KEY;
-    
-    if (!apiKey) {
+    if (!DEEPSEEK_API_KEY) {
       return {
         success: false,
-        error: 'API Key 未配置'
+        error: 'DeepSeek API Key 未配置'
       };
     }
 
@@ -69,7 +72,7 @@ exports.main = async (event, context) => {
       },
       {
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
+          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
           'Content-Type': 'application/json'
         },
         timeout: 30000
@@ -78,7 +81,7 @@ exports.main = async (event, context) => {
 
     const content = response.data.choices[0].message.content;
     const jsonMatch = content.match(/\{[\s\S]*\}/);
-    
+
     if (!jsonMatch) {
       return {
         success: false,
